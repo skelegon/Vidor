@@ -14,7 +14,7 @@ ffmpeg is used to create arbitary amount of thumbnails for each video. </p>
 <li>Creating thumbnails of videos, allowing to open video from a certain timestamp</li>
 <li>Tagging videos for tag based search</li>
 <li>Browsing videos by file name or video length</li>
-<li>Customizeable folder locations</li>
+<li>Customizable folder locations</li>
 <li>Recursive folder scan for video file discovery</li>
 </ol>
 
