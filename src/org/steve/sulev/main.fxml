@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane fx:id="stage" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.steve.sulev.MainController">
+    <children>
+        <MenuBar AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <menus>
+                <Menu text="File">
+                    <items>
+                        <MenuItem text="Close" />
+                        <MenuItem onAction="#onSettingsAction" text="Settings" />
+                    </items>
+                </Menu>
+                <Menu text="Help">
+                    <items>
+                        <MenuItem text="About" />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <TreeTableView fx:id="filelist" layoutX="14.0" layoutY="71.0" prefHeight="524.0" prefWidth="491.0" style="-fx-focus-color: transparent; -fx-faint-focus-color: transparent; -fx-border-color: #ccc;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="71.0" />
+        <ScrollPane fx:id="scroll" hbarPolicy="NEVER" layoutX="491.0" layoutY="74.0" prefHeight="502.0" prefWidth="200.0" style="-fx-faint-focus-color: transparent; -fx-focus-color: transparent; -fx-border-color: #ccc;" AnchorPane.bottomAnchor="69.0" AnchorPane.leftAnchor="490.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="24.0">
+            <content>
+                <FlowPane fx:id="flow" hgap="5.0" prefHeight="100.0" prefWidth="100.0" vgap="5.0">
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding></FlowPane>
+            </content>
+        </ScrollPane>
+        <ComboBox fx:id="tagcombo" layoutX="815.0" layoutY="533.0" prefHeight="25.0" prefWidth="177.0" visibleRowCount="30" AnchorPane.bottomAnchor="37.0" AnchorPane.rightAnchor="8.0" />
+        <Button layoutX="889.0" layoutY="563.0" onAction="#onTagAddAction" text="Add" AnchorPane.bottomAnchor="7.0" AnchorPane.rightAnchor="73.0" />
+        <Button layoutX="932.0" layoutY="563.0" onAction="#onTagsManageAction" text="Manage" AnchorPane.bottomAnchor="7.0" AnchorPane.rightAnchor="8.0" />
+        <FlowPane fx:id="tagbox" hgap="5.0" layoutX="491.0" layoutY="526.0" prefHeight="69.0" prefWidth="320.0" vgap="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="491.0" AnchorPane.rightAnchor="189.0">
+            <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+            </padding></FlowPane>
+        <TextField fx:id="searchbox" layoutX="14.0" layoutY="36.0" prefHeight="25.0" prefWidth="218.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="36.0" />
+        <Button layoutX="238.0" layoutY="36.0" onAction="#onSearchAction" text="Search" AnchorPane.leftAnchor="238.0" AnchorPane.topAnchor="36.0" />
+    </children>
+</AnchorPane>

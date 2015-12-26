@@ -8,13 +8,17 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
+    // Starts the program and configures the main window title and size. Loads the layout file.
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("mainGUI.fxml"));
-        primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 300, 275));
+        Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
+        primaryStage.setTitle("Vidor 0.5");
+        primaryStage.setScene(new Scene(root));
+        primaryStage.setWidth(1400);
+        primaryStage.setHeight(600);
+        primaryStage.setMinWidth(800);
+        primaryStage.setMinHeight(600);
         primaryStage.show();
-        //
     }
 
 

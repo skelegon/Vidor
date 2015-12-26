@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <ListView fx:id="tagslist" prefHeight="300.0" prefWidth="200.0" AnchorPane.bottomAnchor="35.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+        <TextField fx:id="tagstextbox" layoutX="5.0" layoutY="305.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="115.0" />
+        <Button layoutX="169.0" layoutY="305.0" mnemonicParsing="false" onAction="#onTagAddAction" prefHeight="25.0" prefWidth="40.0" text="Add" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="70.0" />
+        <Button layoutX="220.0" layoutY="305.0" mnemonicParsing="false" onAction="#onTagRemoveAction" text="Remove" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0" />
+    </children>
+</AnchorPane>
