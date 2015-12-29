@@ -27,9 +27,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by Steve Sulev on 26.12.2015.
+/***
+ * Importance of this class: Inserts data to database in a new thread to prevent UI freezing.
+ * Generates thumbnails.
+ * Displays loading bar and file info that's being processed.
  */
+
 public class ProcessWindow extends Stage{
     private int width;
     private int count;
@@ -42,6 +45,7 @@ public class ProcessWindow extends Stage{
     @FXML
     private Label processmessage;
 
+    //Class constructor
     public ProcessWindow(Window owner, Map<String, List<File>> files, int width, int count){
         setTitle("Checking database integrity.");
         initModality(Modality.WINDOW_MODAL);
@@ -68,6 +72,7 @@ public class ProcessWindow extends Stage{
         init();
     }
 
+    //All processing in new thread, status messages are sent back to UI thread.
     private Task task = new Task<Void>() {
         @Override public Void call() {
             JdbcConnectionSource cs = null;
@@ -130,6 +135,10 @@ public class ProcessWindow extends Stage{
         }
     };
 
+    /***
+     * Runs ffmpeg.exe in the background and passes parameters to generate thumbnails with specified width (height is relative to width)
+     * Timestamp is added to all thumbnails, converted to byte array and stored in a list and later list with all thumbnails is returned back to caller.
+     */
     private List<Frame> genThumbs(String file, int count, int width, int fileid) throws IOException, InterruptedException {
         List<Frame> frames = new ArrayList<>();
 
@@ -156,6 +165,7 @@ public class ProcessWindow extends Stage{
             for(int i = 1; i <= count; i++){
                 int seconds = limit * i;
 
+                //Useful debug line
                 //System.out.println(String.format("PIC: ffmpeg.exe -ss %s -i \"%s\" -vf scale=%s:-1 -vframes 1 -y \"thumbnails/%s.jpg\"", Utilities.formatSeconds(seconds), file, width, i));
 
                 p = new ProcessBuilder("ffmpeg.exe",
@@ -172,12 +182,14 @@ public class ProcessWindow extends Stage{
                 );
 
                 process = p.start();
-                br = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
-                //Dirty hack
+                /*
+                // Needs more research, some videos seem to halt the program (Very rare edge cases)
+                br = new BufferedReader(new InputStreamReader(process.getErrorStream()));
                 while ((line = br.readLine()) != null) {
-                    //System.out.println(line);
+                    System.out.println(line);
                 }
+                */
 
                 process.waitFor();
 
@@ -203,6 +215,7 @@ public class ProcessWindow extends Stage{
         return frames;
     }
 
+    //Called after constructor, just to keep constructor simple and relevant to class.
     private void init() {
         progress.progressProperty().bind(task.progressProperty());
         processmessage.textProperty().bind(task.messageProperty());

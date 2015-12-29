@@ -14,8 +14,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-/**
- * Created by Steve Sulev on 26.12.2015.
+/***
+ * Importance of this class: Used to modify application settings parameters
  */
 public class SettingsWindow extends Stage {
 
@@ -43,10 +43,12 @@ public class SettingsWindow extends Stage {
     @FXML
     private Slider thumbnailcountslider;
 
+    // Closes the "Settings configruation" window when the "Close" button is pressed.
     public void onSettingsCloseAction(ActionEvent actionEvent) {
         close();
     }
 
+    //Saves info from UI back to settings class, closes the stage / returns to caller.
     public void onSettingsSaveAction(ActionEvent actionEvent) {
         settings.setVlcLocation(vlclocationtextfield.getText());
         settings.setThumbnailCount((int)thumbnailcountslider.getValue());
@@ -56,6 +58,7 @@ public class SettingsWindow extends Stage {
         close();
     }
 
+    // Allows browsing for the VLC media player file location and displays the chosen location in the referred text field.
     public void onVlcBrowseAction(ActionEvent actionEvent) {
         File file = new FileChooser().showOpenDialog(this);
         if(file != null){
@@ -63,6 +66,7 @@ public class SettingsWindow extends Stage {
         }
     }
 
+    // Allows browsing for directories of video files and creates a list of the chosen directories.
     public void onLocationAddAction(ActionEvent actionEvent) {
         File dir = new DirectoryChooser().showDialog(this);
 
@@ -71,6 +75,7 @@ public class SettingsWindow extends Stage {
         }
     }
 
+    // Allows removing directories from the list and opens a warning window when the button is pressed but an item is not chosen.
     public void onLocationRemoveAction(ActionEvent actionEvent) {
         int item = dirlist.getSelectionModel().getSelectedIndex();
         if(item != -1){
@@ -86,6 +91,7 @@ public class SettingsWindow extends Stage {
 
     public Settings getSettings() {return settings;}
 
+    //Class constructor, settings class is passed from caller also parent window to block caller when this stage is open.
     public SettingsWindow(Window owner, Settings s){
         setTitle("Settings configuration");
         setResizable(false);
@@ -107,6 +113,7 @@ public class SettingsWindow extends Stage {
         init();
     }
 
+    //General setup, adds passed in settings info to UI, maps value listeners for slider UI elements.
     private void init() {
         //VLC Location
         if(!settings.getVlcLocation().trim().isEmpty()){

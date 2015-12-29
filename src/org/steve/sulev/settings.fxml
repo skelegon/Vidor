@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+
+<!--
+The Settings window is created using JavaFX Scene Builder 8.0.0
+
+ Under Settings we can:
+   1. Set the location of VLC media player
+   2. Determine the thumbnail count. (Limited from 2 to 30 per video).
+   3. Determine the thumbnail max width. (Limited from 100 to 500 px).
+   4. Choose the thumbnail highlight color.
+-->
 
 <AnchorPane xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1">
     <children>
@@ -14,10 +23,10 @@
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                             <children>
-                                <Label layoutX="14.0" layoutY="14.0" text="VLC Mediaplayer Location:" />
+                                <Label layoutX="14.0" layoutY="14.0" text="VLC Media Player Location:" />
                                 <Button layoutX="162.0" layoutY="10.0" mnemonicParsing="false" onAction="#onVlcBrowseAction" text="Browse" />
                                 <Label layoutX="14.0" layoutY="43.0" text="Thumbnail Count:" />
-                                <Slider fx:id="thumbnailcountslider" layoutX="120.0" layoutY="45.0" max="30.0" min="1.0" />
+                                <Slider fx:id="thumbnailcountslider" layoutX="120.0" layoutY="45.0" max="30.0" min="2.0" />
                                 <Label fx:id="thumbnailcountlabel" layoutX="264.0" layoutY="42.0" text="()" />
                                 <Label layoutX="14.0" layoutY="73.0" text="Thumbnail Max Width:" />
                                 <Slider fx:id="thumbnailwidthslider" blockIncrement="1.0" layoutX="147.0" layoutY="75.0" max="500.0" min="100.0" prefHeight="14.0" prefWidth="205.0" />

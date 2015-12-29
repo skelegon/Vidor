@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
 <?import java.lang.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+
+<!--
+The UI elements are created using JavaFX Scene Builder 8.0.0.
+main.fxml is the main program window that is opened when the program starts
+-->
 
 <AnchorPane fx:id="stage" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.steve.sulev.MainController">
     <children>
@@ -11,13 +16,13 @@
             <menus>
                 <Menu text="File">
                     <items>
-                        <MenuItem text="Close" />
+                        <MenuItem onAction="#onCloseAction" text="Close" />
                         <MenuItem onAction="#onSettingsAction" text="Settings" />
                     </items>
                 </Menu>
                 <Menu text="Help">
                     <items>
-                        <MenuItem text="About" />
+                        <MenuItem onAction="#onAboutAction" text="About" />
                     </items>
                 </Menu>
             </menus>

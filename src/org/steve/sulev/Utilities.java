@@ -6,8 +6,11 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.DirectoryIteratorException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -17,10 +20,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/***
+ * Class Utilities combines the utility methods, including tools for unit formatting, comparing and converting.
+ * Here are also the tools for managing the config file and starting the VLC media player.
+ */
+
 public final class Utilities {
     private static PropertiesConfiguration config = new PropertiesConfiguration();
     private Utilities(){}
 
+    // Loads the settings from config file. If no values defined, the deafult values are returned.
     public static Settings loadSettings(){
         config.setListDelimiter('|');
         Settings s = new Settings();
@@ -39,6 +48,7 @@ public final class Utilities {
         return s;
     }
 
+    // Saves the settings to config file.
     public static void saveSettings(Settings settings) {
         config.setProperty("vlclocation", settings.getVlcLocation());
         config.setProperty("thumbnailcount", settings.getThumbnailCount());
@@ -53,6 +63,7 @@ public final class Utilities {
         }
     }
 
+    // Lists the files in the selected directories that match the predefined extensions.
     public static List<File> getFilesFromDisk(Path p) {
         List<File> result = new ArrayList<>();
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(p, "*.{wmv,mp4,flv,mov,avi,mkv}")) {
@@ -65,18 +76,21 @@ public final class Utilities {
         return result;
     }
 
+    // Formats seconds in hh:mm:ss
     public static String formatSeconds(int s){
         return String.format("%02d:%02d:%02d", s / 3600, (s % 3600) / 60, s % 60);
     }
 
+    // Converts the byte array to javafx image format
     public static Image bytesToImage(byte[] bytes) throws IOException{
         return SwingFXUtils.toFXImage(ImageIO.read(new ByteArrayInputStream(bytes)), null);
     }
 
-    public static void startVid(String parameters) {
+    // Starts the VLC media player with the video at the selected time.
+    public static void startVid(String parameters, String vlcpath) {
         String[] args = parameters.split(",");
         try {
-            new ProcessBuilder("C:\\Program Files (x86)\\VideoLAN\\VLC\\vlc.exe",
+            new ProcessBuilder(vlcpath,
                     args[0],
                     args[1],
                     args[2]
@@ -86,11 +100,14 @@ public final class Utilities {
         }
     }
 
+    // Formats the file size to two places after the decimal
     public static String floatForm (double d)
     {
         return new DecimalFormat("#.##").format(d);
     }
 
+    // converts the byte values to human readable format.
+    // Reference: XXX, 9.04.2014, http://stackoverflow.com/a/22967188
     public static String bytesToHuman (long size)
     {
         if(size == 0) return "";
@@ -113,6 +130,7 @@ public final class Utilities {
         return "???";
     }
 
+    // Compares the strings in the list with the given strings while ignoring the case sensitivity
     public static boolean containsCaseInsensitive(List<String> list, String strToCompare)
     {
         for(String str:list)
@@ -123,5 +141,14 @@ public final class Utilities {
             }
         }
         return false;
+    }
+
+    //Opens default browser and loads this projects github page.
+    public static void openGit(){
+        try{
+            Desktop.getDesktop().browse(new URL("https://github.com/skelegon/Vidor").toURI());
+        } catch (URISyntaxException | IOException ex){
+            ex.printStackTrace();
+        }
     }
 }

@@ -4,19 +4,25 @@ import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.sun.org.apache.xpath.internal.functions.FuncGenerateId;
 
 /**
- * Created by Steve Sulev on 26.12.2015.
+ * Importance of this class: Holds values for file (video) related info, also doubles as database model (for ORMLite)
+ * Includes file parameters such as: id, name, file-size, missing (Missing from disk), folder (Foreign value from folders table)
+ * video tags (Foreign value from video_tags table)
  */
+
+//Declare ORMLite table name and fields
+//CREATE TABLE `files` (`id` INTEGER PRIMARY KEY AUTOINCREMENT , `name` VARCHAR , `fileSize` BIGINT , `missing` BOOLEAN , `folder_id` INTEGER , UNIQUE (`name`,`folder_id`) )
 @DatabaseTable(tableName = "files")
 public class File {
     public static final String FILE_ID = "id";
     public static final String FOLDER_ID = "folder_id";
 
+    //Primary key in database, auto increment values
     @DatabaseField(generatedId = true)
     private int id;
 
+    //name and folder id are unique together
     @DatabaseField(uniqueCombo = true)
     private String name;
 
@@ -26,19 +32,22 @@ public class File {
     @DatabaseField
     private Boolean missing = false;
 
+    //Foreign field (folder_id), unique together with name.
     @DatabaseField(foreign = true, columnName = FOLDER_ID, uniqueCombo = true, foreignAutoRefresh = true)
     private Folder folder;
 
+    //VideoTags collection from foreign table (video_tags)
     @ForeignCollectionField
     private ForeignCollection<VideoTags> tags;
 
-    File(){}
+    File(){} //Empty constructor needed for ORMLite
     public File(String name, Long fileSize, Folder folder){
         this.name = name;
         this.fileSize = fileSize;
         this.folder = folder;
     }
 
+    //Getters and Setters, auto-generated (Some methods not yet used)
     public int getId() {
         return id;
     }
@@ -79,6 +88,7 @@ public class File {
         return tags;
     }
 
+    //Custom equals method, needed in order to use equals and contains methods. (Compares name and class type)
     @Override
     public boolean equals(Object o){
         if(o == null) return false;
@@ -86,5 +96,4 @@ public class File {
         File f = (File)o;
         return this.name != null && this.name.equals(f.name);
     }
-
 }

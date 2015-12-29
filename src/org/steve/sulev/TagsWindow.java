@@ -21,18 +21,19 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.stream.Collectors;
 
-/**
- * Created by Steve Sulev on 26.12.2015.
+/***
+ * Importance of this class: Provides UI to Add and Remove tags from database.
  */
+
 public class TagsWindow extends Stage {
     private final ObservableList<String> data = FXCollections.observableArrayList();
     private Dao<Tag, Integer> tagDao;
 
     @FXML
-    public ListView tagslist;
+    private ListView tagslist;
 
     @FXML
-    public TextField tagstextbox;
+    private TextField tagstextbox;
 
     public TagsWindow(Window owner){
         setResizable(false);

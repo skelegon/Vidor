@@ -4,19 +4,24 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 /**
- * Created by Steve Sulev on 26.12.2015.
+ * Importance of this class: defines tag related variables, also doubles as database model (for ORMLite)
  */
+
+//Declare ORMLite table name and fields
+//CREATE TABLE `tags` (`id` INTEGER PRIMARY KEY AUTOINCREMENT , `name` VARCHAR ,  UNIQUE (`name`))
 @DatabaseTable(tableName = "tags")
 public class Tag {
     public static final String TAG_NAME = "name";
 
+    //Primary key, auto increment
     @DatabaseField(generatedId = true)
     private int id;
 
+    //Tag name must be unique
     @DatabaseField(unique = true)
     private String name;
 
-    Tag(){}
+    Tag(){} //Empty constructor for ORMLite
     public Tag(String name){
         this.name = name;
     }
@@ -37,6 +42,7 @@ public class Tag {
         this.name = name;
     }
 
+    //custom equals method for contains function (Compares name and class type)
     @Override
     public boolean equals(Object o){
         if(o == null) return false;

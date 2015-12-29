@@ -4,7 +4,6 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;
 import com.j256.ormlite.stmt.DeleteBuilder;
-import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.table.TableUtils;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -13,7 +12,6 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.effect.InnerShadow;
@@ -25,25 +23,21 @@ import javafx.scene.paint.Color;
 import javafx.stage.Window;
 
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.text.Collator;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 /***
  * MainController class sets actions for main (main.fxml) UI elements.
- * We implement Initializable to initialize a controller after its root element has been completely processed. (Calls initialize method)
- *
+ * Entry point to all other functions.
  */
 
-public class MainController implements Initializable {
+public class MainController {
     private Settings settings;
-
     private ObservableList<String> tagList = FXCollections.observableArrayList();
 
     //Structures to hold file and folder information
@@ -78,6 +72,13 @@ public class MainController implements Initializable {
     @FXML
     private TextField searchbox;
 
+    /***
+     * Opens settings window and passes settings parameters.
+     * Waits until window is closed.
+     * Reads values from SettingsWindow class back to settings variable.
+     * Saves settings to external file.
+     * Initializes intcheck.
+     */
     public void onSettingsAction(ActionEvent actionEvent) {
         Window owner = stage.getScene().getWindow();
         SettingsWindow s = new SettingsWindow(owner, settings);
@@ -87,6 +88,7 @@ public class MainController implements Initializable {
         intcheck();
     }
 
+    // Controls for the "Add" button. Adds the selected tag to the selected video.
     public void onTagAddAction(ActionEvent actionEvent) {
         File f = filelist.getSelectionModel().selectedItemProperty().getValue().getValue();
         try {
@@ -98,14 +100,16 @@ public class MainController implements Initializable {
         }
     }
 
+    // Controls for the "Manage" button. Opens the tags window.
     public void onTagsManageAction(ActionEvent actionEvent) {
         Window owner = stage.getScene().getWindow();
         TagsWindow s = new TagsWindow(owner);
-        s.showAndWait();
+        s.showAndWait(); //Blocks the caller until the modal stage is closed
         tagList.clear();
         tagList.addAll(s.getTags());
     }
 
+    // Pressing the "Search" button runs the "updateList" method. Only videos with tags assigned in the searchbox are displayed. If the searchbox is empty, all videos are shown.
     public void onSearchAction(ActionEvent actionEvent) {
         if(searchbox.getText().isEmpty()){
             updateList(dbFiles);
@@ -114,18 +118,35 @@ public class MainController implements Initializable {
         }
     }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        settings = Utilities.loadSettings();
+    //Opens my github page
+    public void onAboutAction(ActionEvent actionEvent) {
+        Utilities.openGit();
+    }
 
+    //Closes the application
+    public void onCloseAction(ActionEvent actionEvent) { System.exit(0); }
+
+    /***
+     * This is activated by FXMLLoader when fxml file is loaded.
+     * Loads settings from external file (vidor.config) via Utilities class.
+     * Binds scroll element size with flow element size.
+     * Calls run() method at some unspecified time in the future.
+     * (Basically when entire fxml is loaded to prevent nullpointer exceptions)
+     */
+    public void initialize() {
+        settings = Utilities.loadSettings();
         scroll.viewportBoundsProperty().addListener((bounds, oldBounds, newBounds) -> {
             flow.setPrefWidth(newBounds.getWidth());
             flow.setPrefHeight(newBounds.getHeight());
         });
-
         Platform.runLater(this::run);
     }
 
+    /***
+     * Initializes database
+     * populates tagList (Observablelist)
+     * performs initial integrity check
+     */
     private void run() {
         setupDatabase();
         try {
@@ -137,6 +158,7 @@ public class MainController implements Initializable {
         intcheck();
     }
 
+    //Checks the integrity of the database and updates file list on UI
     private void intcheck() {
         diskFiles.clear(); //Questionable? Proper way to clean maps needs research.
 
@@ -165,6 +187,7 @@ public class MainController implements Initializable {
         }
     }
 
+    //Returns TreeItem, sets parent and adds icon
     private TreeItem<File> makeBranch(File file, TreeItem<File> parent, ImageView icon){
         TreeItem<File> item = new TreeItem<>(file, icon);
         item.setExpanded(true);
@@ -172,6 +195,17 @@ public class MainController implements Initializable {
         return item;
     }
 
+    /***
+     * Updates values in UI TreeTableView element
+     * Sets row selection event listener (Triggers if row is changed)
+     * When event listener triggers then corresponding video frames (thumbnails) are retrieved from database,
+     * made into ImageView elements and added to UI FlowPane element.
+     * Each ImageView element has 3 eventlisteners:
+     *      1. setOnMouseClicked (When image is clicked, opens VLC media player with corresponding video at certain time)
+     *      2. setOnMouseEntered (When mouse moves on the picture, highlight effect is shown)
+     *      3.setOnMouseExited (When mouse leaves the picture, highlight effect is removed)
+     * Retrieves corresponding video tags and adds to tagbox FlowPane UI element.
+     */
     public void updateList(Map<String, List<File>> files){
         TreeItem<File> root = new TreeItem<>(new File("Files", 0L, null));
         root.setExpanded(true);
@@ -219,7 +253,7 @@ public class MainController implements Initializable {
                                 iv.setImage(Utilities.bytesToImage(frame.getThumbnail()));
 
                                 iv.setId(String.format("--start-time,%s,\"%s\"", frame.getTime(), f.getFolder().getLocation() + "\\" + f.getName()));
-                                iv.setOnMouseClicked(event -> Utilities.startVid(iv.getId()));
+                                iv.setOnMouseClicked(event -> Utilities.startVid(iv.getId(), settings.getVlcLocation()));
 
                                 InnerShadow innerShadow = new InnerShadow();
                                 innerShadow.setRadius(15.0);
@@ -243,6 +277,12 @@ public class MainController implements Initializable {
                 });
     }
 
+    /***
+     * Creates video tag button
+     * It's label element with button element inside it.
+     * Inline CSS is added to set background color, add rounded corners and remove focus color.
+     * Event listener with tag delete function is assigned to button element. (Delete also removes the label itself.)
+     */
     public void createTagButton(File file, Tag tag){
         Button closeButton = new Button();
         closeButton.setGraphic(new ImageView(new Image(getClass().getResourceAsStream("close.png"))));
@@ -267,6 +307,11 @@ public class MainController implements Initializable {
         tagbox.getChildren().add(label);
     }
 
+    /***
+     * Compares diskFiles and dbFiles HashMaps
+     * Returns difference between given lists
+     * Used in integrity check to keep database info same as on disk.
+     */
     public Map<String, List<File>> compareLists(Map<String, List<File>> irl, Map<String, List<File>> db) {
         if (irl.size() == 0 && db.size() == 0) {
             return null;
@@ -302,8 +347,9 @@ public class MainController implements Initializable {
         }
     }
 
+    //Populates dbFiles HashMap
     private void populateDbFiles() {
-        dbFiles.clear(); //??
+        dbFiles.clear(); //Perhaps not the best way to do it, needs more research
         try {
             List<Folder> folders = folderDao.queryForAll();
             for(Folder folder : folders){
@@ -315,6 +361,7 @@ public class MainController implements Initializable {
         }
     }
 
+    //Sets up database access objects and created data tables in Sqlite DB if missing.
     private void setupDatabase() {
         JdbcConnectionSource cs = null;
         try {
@@ -341,16 +388,19 @@ public class MainController implements Initializable {
         }
     }
 
+    /***
+     * Search files from database that correspond with searchbox UI element value.
+     * Splits searchbox string by comma and queries DB for files where videotag is equal to all parameters split that way.
+     * returns HashMap
+     */
     private Map<String, List<File>> searchFiles(String find){
         Map<String, List<File>> res = new HashMap<>();
         String[] parts = find.split(",");
         try {
             List<Tag> t = tagDao.queryBuilder().where().in(Tag.TAG_NAME, parts).query();
-
             List<VideoTags> vtl = videoTagsDao.queryBuilder()
                     .groupBy(VideoTags.FILE_ID).having(String.format("COUNT(%s) = %s", VideoTags.TAG_ID, t.size())).where()
                     .in(VideoTags.TAG_ID, t).query();
-
             for (VideoTags vt : vtl) {
                 String folder = vt.getFile().getFolder().getLocation();
                 if(!res.containsKey(folder)){
