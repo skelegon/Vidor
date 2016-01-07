@@ -154,7 +154,7 @@ public class MainController {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        tagcombo.setItems(new SortedList<String>(tagList, Collator.getInstance()));
+        tagcombo.setItems(new SortedList<>(tagList, Collator.getInstance()));
         intcheck();
     }
 
@@ -162,14 +162,16 @@ public class MainController {
     private void intcheck() {
         diskFiles.clear(); //Questionable? Proper way to clean maps needs research.
 
-        for(Iterator<String> iter = settings.getFolders().iterator(); iter.hasNext(); ){
-            String f = iter.next();
-            Path p = Paths.get(f);
-            if(Files.exists(p)){
-                diskFiles.put(f, Utilities.getFilesFromDisk(p));
-            } else {
-                iter.remove();
-                Utilities.saveSettings(settings);
+        if(settings.getFolders() != null) {
+            for (Iterator<String> iter = settings.getFolders().iterator(); iter.hasNext(); ) {
+                String f = iter.next();
+                Path p = Paths.get(f);
+                if (Files.exists(p)) {
+                    diskFiles.put(f, Utilities.getFilesFromDisk(p));
+                } else {
+                    iter.remove();
+                    Utilities.saveSettings(settings);
+                }
             }
         }
 
@@ -177,7 +179,7 @@ public class MainController {
 
         Map<String, List<File>> diff = compareLists(diskFiles, dbFiles);
 
-        if(diff.size() != 0){
+        if(diff != null){
             Window owner = stage.getScene().getWindow();
             ProcessWindow p = new ProcessWindow(owner, diff, settings.getThumbnailWidth(), settings.getThumbnailCount());
             p.showAndWait();

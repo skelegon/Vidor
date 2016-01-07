@@ -43,7 +43,11 @@ public final class Utilities {
         s.setThumbnailCount(config.getInt("thumbnailcount", 10));
         s.setThumbnailWidth(config.getInt("thumbnailwidth", 200));
         s.setThumbnailHighlightColor(config.getString("thumbnailhighlightcolor", ""));
-        s.setFolders(new ArrayList(Arrays.asList(config.getStringArray("folders"))));
+
+        List<String> f = new ArrayList(Arrays.asList(config.getStringArray("folders")));
+        if(!f.get(0).trim().isEmpty()) { //Bug fix - Empty folder check
+            s.setFolders(f);
+        }
 
         return s;
     }
